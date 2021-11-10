@@ -1,0 +1,469 @@
+##Preparing the data tables
+isoc_sk_dskl_i$Country <- as_factor(isoc_sk_dskl_i$GEO)
+isoc_sk_dskl_i$Popgroup <- as_factor(isoc_sk_dskl_i$IND_TYPE)
+isoc_sk_dskl_i$Outcome <- as_factor(isoc_sk_dskl_i$INDIC_IS)
+isoc_sk_dskl_i$TIME <- NULL
+isoc_sk_dskl_i$UNIT <- NULL
+isoc_sk_dskl_i$FLAGS_FOOTNOTES <- NULL
+
+FullTable <- isoc_sk_dskl_i %>%
+  filter(INDIC_IS %in% c("I_DSK_AB", "I_DSK_B", "I_DSK_L"))
+
+FullTable <- FullTable %>%
+  mutate(DigSkill = case_when(INDIC_IS == "I_DSK_AB" ~ 3,
+                              INDIC_IS == "I_DSK_B" ~ 2,
+                              INDIC_IS == "I_DSK_L" ~ 1))
+
+#Access to internet
+isoc_ci_in_h$Country <- as_factor(isoc_ci_in_h$GEO)
+isoc_ci_in_h$HHGroup <- as_factor(isoc_ci_in_h$HHTYP)
+isoc_ci_in_h$TIME <- NULL
+isoc_ci_in_h$UNIT <- NULL
+isoc_ci_in_h$FLAGS_FOOTNOTES <- NULL
+
+#Devices for accessing internet
+isoc_ci_dev_i$Country <- as_factor(isoc_ci_dev_i$GEO)
+isoc_ci_dev_i$Popgroup <- as_factor(isoc_ci_dev_i$IND_TYPE)
+isoc_ci_dev_i$Output <- as_factor(isoc_ci_dev_i$INDIC_IS)
+isoc_ci_dev_i$TIME <- NULL
+isoc_ci_dev_i$UNIT <- NULL
+isoc_ci_dev_i$FLAGS_FOOTNOTES <- NULL
+
+
+##Above average digital skills
+Above_Avg_DigSkill <- isoc_sk_dskl_i %>%
+  filter(INDIC_IS == "I_DSK_AB")
+
+Tableau_Above_Avg_DigSkill_Long <- Above_Avg_DigSkill %>%
+  melt(id.vars = c("Country", "Popgroup"), measure.vars = "value")
+
+Tableau_Above_Avg_DigSkill_Long$Country <- as.character(Tableau_Above_Avg_DigSkill_Long$Country)
+Tableau_Above_Avg_DigSkill_Long$Popgroup <- as.character(Tableau_Above_Avg_DigSkill_Long$Popgroup)
+Tableau_Above_Avg_DigSkill_Long$value <- as.character(Tableau_Above_Avg_DigSkill_Long$value)
+Tableau_Above_Avg_DigSkill_Long$value <- as.numeric(Tableau_Above_Avg_DigSkill_Long$value)
+
+
+Tableau_Above_Avg_DigSkill_Wide <- Tableau_Above_Avg_DigSkill_Long %>% 
+  dcast(Country~Popgroup)
+
+##Basic digital skills
+Basic_DigSkill <- isoc_sk_dskl_i %>%
+  filter(INDIC_IS == "I_DSK_B")
+
+Tableau_Basic_Dig_Long <- Basic_DigSkill %>%
+  melt(id.vars = c("Country", "Popgroup"), measure.vars = "value")
+
+Tableau_Basic_Dig_Long$Country <- as.character(Tableau_Basic_Dig_Long$Country)
+Tableau_Basic_Dig_Long$Popgroup <- as.character(Tableau_Basic_Dig_Long$Popgroup)
+Tableau_Basic_Dig_Long$value <- as.character(Tableau_Basic_Dig_Long$value)
+Tableau_Basic_Dig_Long$value <- as.numeric(Tableau_Basic_Dig_Long$value)
+
+Tableau_Basic_Dig_Wide <- Tableau_Basic_Dig_Long %>%
+  dcast(Country~Popgroup)
+
+##Low digital skills
+Low_DigSkill <- isoc_sk_dskl_i %>%
+  filter(INDIC_IS == "I_DSK_L")
+
+Tableau_Low_DigSkill_Long <- Low_DigSkill %>%
+  melt(id.vars = c("Country", "Popgroup"), measure.vars = "value")
+
+Tableau_Low_DigSkill_Long$Country <- as.character(Tableau_Low_DigSkill_Long$Country)
+Tableau_Low_DigSkill_Long$Popgroup <- as.character(Tableau_Low_DigSkill_Long$Popgroup)
+Tableau_Low_DigSkill_Long$value <- as.character(Tableau_Low_DigSkill_Long$value)
+Tableau_Low_DigSkill_Long$value <- as.numeric(Tableau_Low_DigSkill_Long$value)
+
+Tableau_Low_DigSkill_Wide <- Tableau_Low_DigSkill_Long %>%
+  dcast(Country~Popgroup)
+
+##Internet Access
+IntAccess <- isoc_ci_in_h
+
+Tableau_IntAccess_Long <- IntAccess %>%
+  melt(id.vars = c("Country", "HHGroup"), measure.vars = "value")
+
+Tableau_IntAccess_Long$Country <- as.character(Tableau_IntAccess_Long$Country)
+Tableau_IntAccess_Long$Popgroup <- as.character(Tableau_IntAccess_Long$HHGroup)
+Tableau_IntAccess_Long$value <- as.character(Tableau_IntAccess_Long$value)
+Tableau_IntAccess_Long$value <- as.numeric(Tableau_IntAccess_Long$value)
+
+Tableau_IntAccess_Wide <- Tableau_IntAccess_Long %>% 
+  dcast(Country~Popgroup)
+
+##Devices to Access Internet
+#Laptop/Netbook/Tablet Computer
+Laptop <- isoc_ci_dev_i %>%
+  filter(INDIC_IS == "I_IUG_MC")
+
+Laptop_Long <- Laptop %>%
+  melt(id.vars = c("Country", "Popgroup"), measure.vars = "value")
+
+Laptop_Long$Country <- as.character(Laptop_Long$Country)
+Laptop_Long$Popgroup <- as.character(Laptop_Long$Popgroup)
+Laptop_Long$value <- as.character(Laptop_Long$value)
+Laptop_Long$value <- as.numeric(Laptop_Long$value)
+
+Laptop_Wide <- Laptop_Long %>% 
+  dcast(Country~Popgroup)
+
+
+#Mobile Devices
+Mobile <- isoc_ci_dev_i %>%
+  filter(INDIC_IS == "I_IUG_MD")
+
+Mobile_Long <- Mobile %>%
+  melt(id.vars = c("Country", "Popgroup"), measure.vars = "value")
+
+Mobile_Long$Country <- as.character(Mobile_Long$Country)
+Mobile_Long$Popgroup <- as.character(Mobile_Long$Popgroup)
+Mobile_Long$value <- as.character(Mobile_Long$value)
+Mobile_Long$value <- as.numeric(Mobile_Long$value)
+
+Mobile_Wide <- Mobile_Long %>% 
+  dcast(Country~Popgroup)
+
+
+#Desktop or Laptop/Netbook/tablet
+DeskLaptop <- isoc_ci_dev_i %>%
+  filter(INDIC_IS == "I_IUG_IPC")
+
+DeskLaptop_Long <- DeskLaptop %>%
+  melt(id.vars = c("Country", "Popgroup"), measure.vars = "value")
+
+DeskLaptop_Long$Country <- as.character(DeskLaptop_Long$Country)
+DeskLaptop_Long$Popgroup <- as.character(DeskLaptop_Long$Popgroup)
+DeskLaptop_Long$value <- as.character(DeskLaptop_Long$value)
+DeskLaptop_Long$value <- as.numeric(DeskLaptop_Long$value)
+
+DeskLaptop_Wide <- DeskLaptop_Long %>% 
+  dcast(Country~Popgroup)
+
+
+#Desktop or Laptop/Netbook/Tablet AND Mobile device
+DeskLaptopMobile <- isoc_ci_dev_i %>%
+  filter(INDIC_IS == "I_IUG_IPCTMP")
+
+DeskLaptopMobile_Long <- DeskLaptopMobile %>%
+  melt(id.vars = c("Country", "Popgroup"), measure.vars = "value")
+
+DeskLaptopMobile_Long$Country <- as.character(DeskLaptopMobile_Long$Country)
+DeskLaptopMobile_Long$Popgroup <- as.character(DeskLaptopMobile_Long$Popgroup)
+DeskLaptopMobile_Long$value <- as.character(DeskLaptopMobile_Long$value)
+DeskLaptopMobile_Long$value <- as.numeric(DeskLaptopMobile_Long$value)
+
+DeskLaptopMobile_Wide <- DeskLaptopMobile_Long %>% 
+  dcast(Country~Popgroup)
+
+##Writing files
+write.csv(Tableau_IntAccess_Long, file = "Tableau_IntAccess_Long.csv")
+write.csv(Tableau_IntAccess_Wide, file = "Tableau_IntAccess_Wide.csv")
+
+write.csv(Laptop_Long, file = "Laptop_Long.csv")
+write.csv(Laptop_Wide, file = "Laptop_Wide.csv")
+
+write.csv(Mobile_Long, file = "Mobile_Long.csv")
+write.csv(Mobile_Wide, file = "Mobile_Wide.csv")
+
+write.csv(DeskLaptop_Long, file = "DeskLaptop_Long.csv")
+write.csv(DeskLaptop_Wide, file = "DeskLaptop_Wide.csv")
+
+write.csv(DeskLaptopMobile_Long, file = "DeskLaptopMobile_Long.csv")
+write.csv(DeskLaptopMobile_Wide, file = "DeskLaptopMobile_Wide.csv")
+
+#Some Stats Stuff
+install.packages("summarytools")
+library(summarytools)
+
+##All Individuals
+descr(Tableau_Above_Avg_DigSkill_Wide$`All Individuals`)
+descr(Tableau_Basic_Dig_Wide$`All Individuals`)
+descr(Tableau_Low_DigSkill_Wide$`All Individuals`)
+
+##Above Average Skills
+descr(Tableau_Above_Avg_DigSkill_Wide$`Males with high formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Males with medium formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Males with low formal education`)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 16-24 with high formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 16-24 with medium formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 16-24 with low education`)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 25 to 54 with high formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 25 to 54 with medium formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 25 to 54 with low formal education`)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 55 to 74 with high formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 55 to 74 with medium formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals aged 55 to 74 with low formal education`)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals with high formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals with medium formal education`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals with no or low formal education`)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals living in cities`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals living in towns and suburbs`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals living in rural areas`)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals, 16 to 24 years old`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals, 25 to 34 years old`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals, 35 to 44 years old`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals, 45 to 54 years old`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals, 55 to 64 years old`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individuals, 65 to 74 years old`)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Employees, self-employed, family workers`)
+descr(Tableau_Above_Avg_DigSkill_Wide$Unemployed)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Retired and other inactive`)
+descr(Tableau_Above_Avg_DigSkill_Wide$Students)
+
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individual living in a household with income in first quartile`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individual living in a household with income in second quartile`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individual living in a household with income in third quartile`)
+descr(Tableau_Above_Avg_DigSkill_Wide$`Individual living in a household with income in fourth quartile`)
+
+##Basic SKills
+descr(Tableau_Basic_Dig_Wide$`Males with high formal education`)
+descr(Tableau_Basic_Dig_Wide$`Males with medium formal education`)
+descr(Tableau_Basic_Dig_Wide$`Males with low formal education`)
+
+descr(Tableau_Basic_Dig_Wide$`Females with high formal education`)
+descr(Tableau_Basic_Dig_Wide$`Females with medium formal education`)
+descr(Tableau_Basic_Dig_Wide$`Females with low formal education`)
+
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 16-24 with high formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 16-24 with medium formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 16-24 with low education`)
+
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 25 to 54 with high formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 25 to 54 with medium formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 25 to 54 with low formal education`)
+
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 55 to 74 with high formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 55 to 74 with medium formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals aged 55 to 74 with low formal education`)
+
+descr(Tableau_Basic_Dig_Wide$`Individuals with high formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals with medium formal education`)
+descr(Tableau_Basic_Dig_Wide$`Individuals with no or low formal education`)
+
+descr(Tableau_Basic_Dig_Wide$`Individuals living in cities`)
+descr(Tableau_Basic_Dig_Wide$`Individuals living in towns and suburbs`)
+descr(Tableau_Basic_Dig_Wide$`Individuals living in rural areas`)
+
+descr(Tableau_Basic_Dig_Wide$`Individuals, 16 to 24 years old`)
+descr(Tableau_Basic_Dig_Wide$`Individuals, 25 to 34 years old`)
+descr(Tableau_Basic_Dig_Wide$`Individuals, 35 to 44 years old`)
+descr(Tableau_Basic_Dig_Wide$`Individuals, 45 to 54 years old`)
+descr(Tableau_Basic_Dig_Wide$`Individuals, 55 to 64 years old`)
+descr(Tableau_Basic_Dig_Wide$`Individuals, 65 to 74 years old`)
+
+descr(Tableau_Basic_Dig_Wide$`Employees, self-employed, family workers`)
+descr(Tableau_Basic_Dig_Wide$Unemployed)
+descr(Tableau_Basic_Dig_Wide$`Retired and other inactive`)
+descr(Tableau_Basic_Dig_Wide$Students)
+
+descr(Tableau_Basic_Dig_Wide$`Individual living in a household with income in first quartile`)
+descr(Tableau_Basic_Dig_Wide$`Individual living in a household with income in second quartile`)
+descr(Tableau_Basic_Dig_Wide$`Individual living in a household with income in third quartile`)
+descr(Tableau_Basic_Dig_Wide$`Individual living in a household with income in fourth quartile`)
+
+##Low Dig Skills
+descr(Tableau_Low_DigSkill_Wide$`Males with high formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Males with medium formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Males with low formal education`)
+
+descr(Tableau_Low_DigSkill_Wide$`Females with high formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Females with medium formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Females with low formal education`)
+
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 16-24 with high formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 16-24 with medium formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 16-24 with low education`)
+
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 25 to 54 with high formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 25 to 54 with medium formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 25 to 54 with low formal education`)
+
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 55 to 74 with high formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 55 to 74 with medium formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals aged 55 to 74 with low formal education`)
+
+descr(Tableau_Low_DigSkill_Wide$`Individuals with high formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals with medium formal education`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals with no or low formal education`)
+
+descr(Tableau_Low_DigSkill_Wide$`Individuals living in cities`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals living in towns and suburbs`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals living in rural areas`)
+
+descr(Tableau_Low_DigSkill_Wide$`Individuals, 16 to 24 years old`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals, 25 to 34 years old`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals, 35 to 44 years old`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals, 45 to 54 years old`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals, 55 to 64 years old`)
+descr(Tableau_Low_DigSkill_Wide$`Individuals, 65 to 74 years old`)
+
+descr(Tableau_Low_DigSkill_Wide$`Employees, self-employed, family workers`)
+descr(Tableau_Low_DigSkill_Wide$Unemployed)
+descr(Tableau_Low_DigSkill_Wide$`Retired and other inactive`)
+descr(Tableau_Low_DigSkill_Wide$Students)
+
+descr(Tableau_Low_DigSkill_Wide$`Individual living in a household with income in first quartile`)
+descr(Tableau_Low_DigSkill_Wide$`Individual living in a household with income in second quartile`)
+descr(Tableau_Low_DigSkill_Wide$`Individual living in a household with income in third quartile`)
+descr(Tableau_Low_DigSkill_Wide$`Individual living in a household with income in fourth quartile`)
+
+##Devices used for Internet
+#All Individuals
+descr(Mobile_Wide$`All Individuals`)
+descr(DeskLaptop_Wide$`All Individuals`)
+descr(DeskLaptopMobile_Wide$`All Individuals`)
+
+#Mobile
+descr(Mobile_Wide$`Males with high formal education`)
+descr(Mobile_Wide$`Males with medium formal education`)
+descr(Mobile_Wide$`Males with low formal education`)
+
+descr(Mobile_Wide$`Females with high formal education`)
+descr(Mobile_Wide$`Females with medium formal education`)
+descr(Mobile_Wide$`Females with low formal education`)
+
+descr(Mobile_Wide$`Individuals aged 16-24 with high formal education`)
+descr(Mobile_Wide$`Individuals aged 16-24 with medium formal education`)
+descr(Mobile_Wide$`Individuals aged 16-24 with low education`)
+
+descr(Mobile_Wide$`Individuals aged 25 to 54 with high formal education`)
+descr(Mobile_Wide$`Individuals aged 25 to 54 with medium formal education`)
+descr(Mobile_Wide$`Individuals aged 25 to 54 with low formal education`)
+
+descr(Mobile_Wide$`Individuals aged 55 to 74 with high formal education`)
+descr(Mobile_Wide$`Individuals aged 55 to 74 with medium formal education`)
+descr(Mobile_Wide$`Individuals aged 55 to 74 with low formal education`)
+
+descr(Mobile_Wide$`Individuals with high formal education`)
+descr(Mobile_Wide$`Individuals with medium formal education`)
+descr(Mobile_Wide$`Individuals with no or low formal education`)
+
+descr(Mobile_Wide$`Individuals living in cities`)
+descr(Mobile_Wide$`Individuals living in towns and suburbs`)
+descr(Mobile_Wide$`Individuals living in rural areas`)
+
+descr(Mobile_Wide$`Individuals, 16 to 24 years old`)
+descr(Mobile_Wide$`Individuals, 25 to 34 years old`)
+descr(Mobile_Wide$`Individuals, 35 to 44 years old`)
+descr(Mobile_Wide$`Individuals, 45 to 54 years old`)
+descr(Mobile_Wide$`Individuals, 55 to 64 years old`)
+descr(Mobile_Wide$`Individuals, 65 to 74 years old`)
+
+descr(Mobile_Wide$`Employees, self-employed, family workers`)
+descr(Mobile_Wide$Unemployed)
+descr(Mobile_Wide$`Retired and other inactive`)
+descr(Mobile_Wide$Students)
+
+descr(Mobile_Wide$`Individual living in a household with income in first quartile`)
+descr(Mobile_Wide$`Individual living in a household with income in second quartile`)
+descr(Mobile_Wide$`Individual living in a household with income in third quartile`)
+descr(Mobile_Wide$`Individual living in a household with income in fourth quartile`)
+
+#DeskLaptop
+descr(DeskLaptop_Wide$`Males with high formal education`)
+descr(DeskLaptop_Wide$`Males with medium formal education`)
+descr(DeskLaptop_Wide$`Males with low formal education`)
+
+descr(DeskLaptop_Wide$`Females with high formal education`)
+descr(DeskLaptop_Wide$`Females with medium formal education`)
+descr(DeskLaptop_Wide$`Females with low formal education`)
+
+descr(DeskLaptop_Wide$`Individuals aged 16-24 with high formal education`)
+descr(DeskLaptop_Wide$`Individuals aged 16-24 with medium formal education`)
+descr(DeskLaptop_Wide$`Individuals aged 16-24 with low education`)
+
+descr(DeskLaptop_Wide$`Individuals aged 25 to 54 with high formal education`)
+descr(DeskLaptop_Wide$`Individuals aged 25 to 54 with medium formal education`)
+descr(DeskLaptop_Wide$`Individuals aged 25 to 54 with low formal education`)
+
+descr(DeskLaptop_Wide$`Individuals aged 55 to 74 with high formal education`)
+descr(DeskLaptop_Wide$`Individuals aged 55 to 74 with medium formal education`)
+descr(DeskLaptop_Wide$`Individuals aged 55 to 74 with low formal education`)
+
+descr(DeskLaptop_Wide$`Individuals with high formal education`)
+descr(DeskLaptop_Wide$`Individuals with medium formal education`)
+descr(DeskLaptop_Wide$`Individuals with no or low formal education`)
+
+descr(DeskLaptop_Wide$`Individuals living in cities`)
+descr(DeskLaptop_Wide$`Individuals living in towns and suburbs`)
+descr(DeskLaptop_Wide$`Individuals living in rural areas`)
+
+descr(DeskLaptop_Wide$`Individuals, 16 to 24 years old`)
+descr(DeskLaptop_Wide$`Individuals, 25 to 34 years old`)
+descr(DeskLaptop_Wide$`Individuals, 35 to 44 years old`)
+descr(DeskLaptop_Wide$`Individuals, 45 to 54 years old`)
+descr(DeskLaptop_Wide$`Individuals, 55 to 64 years old`)
+descr(DeskLaptop_Wide$`Individuals, 65 to 74 years old`)
+
+descr(DeskLaptop_Wide$`Employees, self-employed, family workers`)
+descr(DeskLaptop_Wide$Unemployed)
+descr(DeskLaptop_Wide$`Retired and other inactive`)
+descr(DeskLaptop_Wide$Students)
+
+descr(DeskLaptop_Wide$`Individual living in a household with income in first quartile`)
+descr(DeskLaptop_Wide$`Individual living in a household with income in second quartile`)
+descr(DeskLaptop_Wide$`Individual living in a household with income in third quartile`)
+descr(DeskLaptop_Wide$`Individual living in a household with income in fourth quartile`)
+
+#DeskLaptopMobile
+descr(DeskLaptopMobile_Wide$`Males with high formal education`)
+descr(DeskLaptopMobile_Wide$`Males with medium formal education`)
+descr(DeskLaptopMobile_Wide$`Males with low formal education`)
+
+descr(DeskLaptopMobile_Wide$`Females with high formal education`)
+descr(DeskLaptopMobile_Wide$`Females with medium formal education`)
+descr(DeskLaptopMobile_Wide$`Females with low formal education`)
+
+descr(DeskLaptopMobile_Wide$`Individuals aged 16-24 with high formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals aged 16-24 with medium formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals aged 16-24 with low education`)
+
+descr(DeskLaptopMobile_Wide$`Individuals aged 25 to 54 with high formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals aged 25 to 54 with medium formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals aged 25 to 54 with low formal education`)
+
+descr(DeskLaptopMobile_Wide$`Individuals aged 55 to 74 with high formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals aged 55 to 74 with medium formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals aged 55 to 74 with low formal education`)
+
+descr(DeskLaptopMobile_Wide$`Individuals with high formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals with medium formal education`)
+descr(DeskLaptopMobile_Wide$`Individuals with no or low formal education`)
+
+descr(DeskLaptopMobile_Wide$`Individuals living in cities`)
+descr(DeskLaptopMobile_Wide$`Individuals living in towns and suburbs`)
+descr(DeskLaptopMobile_Wide$`Individuals living in rural areas`)
+
+descr(DeskLaptopMobile_Wide$`Individuals, 16 to 24 years old`)
+descr(DeskLaptopMobile_Wide$`Individuals, 25 to 34 years old`)
+descr(DeskLaptopMobile_Wide$`Individuals, 35 to 44 years old`)
+descr(DeskLaptopMobile_Wide$`Individuals, 45 to 54 years old`)
+descr(DeskLaptopMobile_Wide$`Individuals, 55 to 64 years old`)
+descr(DeskLaptopMobile_Wide$`Individuals, 65 to 74 years old`)
+
+descr(DeskLaptopMobile_Wide$`Employees, self-employed, family workers`)
+descr(DeskLaptopMobile_Wide$Unemployed)
+descr(DeskLaptopMobile_Wide$`Retired and other inactive`)
+descr(DeskLaptopMobile_Wide$Students)
+
+descr(DeskLaptopMobile_Wide$`Individual living in a household with income in first quartile`)
+descr(DeskLaptopMobile_Wide$`Individual living in a household with income in second quartile`)
+descr(DeskLaptopMobile_Wide$`Individual living in a household with income in third quartile`)
+descr(DeskLaptopMobile_Wide$`Individual living in a household with income in fourth quartile`)
+
+#Internet Access
+descr(Tableau_IntAccess_Wide$Total)
+descr(Tableau_IntAccess_Wide$`Households located in cities`)
+descr(Tableau_IntAccess_Wide$`Households located in towns and suburbs`)
+descr(Tableau_IntAccess_Wide$`Households located in rural areas`)
+
+descr(Tableau_IntAccess_Wide$`Number of households with income in first quartile`)
+descr(Tableau_IntAccess_Wide$`Number of households with income in second quartile`)
+descr(Tableau_IntAccess_Wide$`Number of households with income in third quartile`)
+descr(Tableau_IntAccess_Wide$`Number of households with income in fourth quartile`)
